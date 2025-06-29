@@ -1,0 +1,46 @@
+captainVersion: 4
+services:
+    $$cap_appname:
+        image: emqx:$$cap_emqx_version
+        restart: always
+        environment:
+            TZ: $$cap_emqx_timezone
+        ports:
+            - 1883:1883     # MQTT
+            - 8883:8883     # MQTT over TLS
+            - 8083:8083     # MQTT over WebSocket
+            - 18083:18083   # Dashboard (HTTP)
+        caproverExtra:
+            containerHttpPort: '18083'
+        volumes:
+            - $$cap_appname-data:/opt/emqx/data
+            - $$cap_appname-etc:/opt/emqx/etc
+            - $$cap_appname-log:/opt/emqx/log
+
+caproverOneClickApp:
+    variables:
+        - id: $$cap_emqx_version
+          label: EMQX version tag
+          description: Revisa los tags en https://hub.docker.com/_/emqx/tags
+          defaultValue: 5.7.0
+        - id: $$cap_emqx_timezone
+          label: Time Zone
+          description: Usa un valor válido según la base de datos TZ, por ejemplo America/Bogota
+          defaultValue: America/Bogota
+    instructions:
+        start: Despliegue del broker MQTT EMQX.
+        end: |-
+            ¡EMQX fue desplegado exitosamente!
+
+            Puedes acceder al panel web en:  
+            👉 http://$$cap_appname.$$cap_root_domain:18083  
+            Usuario por defecto: **admin**  
+            Contraseña por defecto: **public**
+
+            Recuerda configurar tu cliente MQTT apuntando a `$$cap_appname.$$cap_root_domain` en el puerto **1883** (sin TLS) o **8883** (con TLS).
+
+            Más información en https://www.emqx.io/docs
+    displayName: 'EMQX MQTT Broker'
+    description: Plataforma de mensajería IoT altamente escalable, soporte para MQTT, WebSocket y más.
+    documentation: Documentación oficial: https://www.emqx.io/docs
+    isOfficial: false
